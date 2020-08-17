@@ -1,0 +1,37 @@
+security:
+    enable_authenticator_manager: true
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        # https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/8-jwt-user-provider.md#configuring-the-user-provider
+        jwt:
+            lexik_jwt: ~
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        api:
+            stateless: true
+            provider: jwt
+            guard:
+                authenticators:
+                - lexik_jwt_authentication.jwt_token_authenticator
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        # allow unauthenticated users to access the login and token refresh routes
+        - { path: ^/, roles: PUBLIC_ACCESS }
+        # but require authentication for all other admin routes
+        
