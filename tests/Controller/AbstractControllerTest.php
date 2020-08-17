@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -131,6 +132,36 @@ abstract class AbstractControllerTest extends WebTestCase
         }
 
         return null;
+    }
+
+    /**
+     * Simulate a JWT Authentication: Set an http-only cookie with the
+     * Lexik\Bundle\JWTAuthenticationBundle\Encoder\LcobucciJWTEncoder encoded token
+     *
+     * @param string|null $role
+     * @return void
+     */
+    protected function simulateLogin(?string $role = null): void
+    {
+        $roles = [];
+        switch ($role) {
+            case 'ROLE_ADMIN': $roles[] = 'ROLE_ADMIN';
+            default: $roles[] = 'ROLE_USER';
+        }
+
+        $payload = [
+            'iat' => time(),
+            'exp' => time()+5,
+            'roles' => $roles,
+            'username' => 'user@cvlt.dev'
+        ];
+
+        $this->client->getCookieJar()->set(new Cookie(
+            self::$kernel->getContainer()->getParameter('app.jwt_cookie_name'),
+            // gets the special container that allows fetching private services
+            self::$container->get('lexik_jwt_authentication.encoder.lcobucci')
+            ->encode($payload),
+            time()+5));
     }
 
     /**
