@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests;
 
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Loader;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
-use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 /**
- * Class AbstractControllerTest
- * @package App\Tests\Controller
+ * Class AbstractFunctionalTest
+ * @package App\Tests
  */
-abstract class AbstractControllerTest extends WebTestCase
+abstract class AbstractFunctionalTest extends WebTestCase
 {
     /**
      * @var EntityManager $manager
@@ -95,19 +95,6 @@ abstract class AbstractControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $token
-     * @return array
-     */
-    protected static function getAuthHeaders(string $token): array
-    {
-        return [
-            'HTTP_AUTHORIZATION' => "bearer {$token}",
-            'CONTENT_TYPE' => 'application/ld+json',
-            'HTTP_ACCEPT' => 'application/ld+json'
-        ];
-    }
-
-   /**
      * @param string $key
      * @return mixed|null
      */
@@ -133,35 +120,21 @@ abstract class AbstractControllerTest extends WebTestCase
 
         return null;
     }
-
+    
     /**
-     * Simulate a JWT Authentication: Set an http-only cookie with the
-     * Lexik\Bundle\JWTAuthenticationBundle\Encoder\LcobucciJWTEncoder encoded token
-     *
-     * @param string|null $role
+     * @param string $method
+     * @param string $uri
      * @return void
      */
-    protected function simulateLogin(?string $role = null): void
+    protected function methodNotAllowedOnRoute(string $method, string $uri): void
     {
-        $roles = [];
-        switch ($role) {
-            case 'ROLE_ADMIN': $roles[] = 'ROLE_ADMIN';
-            default: $roles[] = 'ROLE_USER';
+        $exceptionThrown = false;
+        try {
+            $this->client->request($method, $uri);
+        } catch (MethodNotAllowedHttpException $e) {
+            $exceptionThrown = true;
         }
-
-        $payload = [
-            'iat' => time(),
-            'exp' => time()+5,
-            'roles' => $roles,
-            'username' => 'user@cvlt.dev'
-        ];
-
-        $this->client->getCookieJar()->set(new Cookie(
-            self::$kernel->getContainer()->getParameter('app.jwt_cookie_name'),
-            // gets the special container that allows fetching private services
-            self::$container->get('lexik_jwt_authentication.encoder.lcobucci')
-            ->encode($payload),
-            time()+5));
+        $this->assertEquals(true, $exceptionThrown);
     }
 
     /**
