@@ -18,3 +18,14 @@ Stateless and database-less JWT authorization ready Symfony 5 microservice skele
 
 *Any more info about the **lexik/jwt-authentication-bundle** here:*
 [LexikJWTAuthenticationBundle#getting-started](https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#getting-started)
+
+> #### Additionally
+>
+> **Originally enabled the secure http-only cookie token extractor** (to provide security against XSS attacks):
+> [LexikJWTAuthenticationBundle/1-configuration-reference.md#automatically-generating-cookies](https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/1-configuration-reference.md#automatically-generating-cookies)
+>
+> *... but the shift back to the authorization header type extractor is easy to, just update the lexik_jwt_authentication config file by this commit:*
+> [commit/Insecure authorization header type token extractor mode](https://github.com/danigore/symfony-5-access-protectable-microservice-skeleton/commit/96d0a45869c68c3b0d10b188ab6a4d7f19b8af0c)
+>
+> ***More info about why is the combination of JWT and XSS so relevant***:
+> [Christian Kolb:Improve security when working with JWT and Symfony](https://blog.liplex.de/improve-security-when-working-with-jwt-and-symfony/)
