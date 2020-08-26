@@ -25,7 +25,15 @@ class AuthorizationTestRoutesControllerTest extends AbstractSecurityTest
         $this->simulateLogin();
 
         $this->output->writeln("<info>Valid request with ROLE_USER ...</info>");
-        $this->client->request('GET', '/authorization-tests/user-role');
+        if ($this->authorizationHeaderTypeTokenExtractorIsEnabled()) {
+            $this->output->writeln("<error>lexik_jwt_authentication.token_extractors.authorization_header enabled</error>");
+            $this->output->writeln("<error>This type of autentication is don't provide security against XSS attacks!</error>");
+            $this->output->writeln("<error>more info: https://blog.liplex.de/improve-security-when-working-with-jwt-and-symfony/</error>");
+
+            $this->client->request('GET', '/authorization-tests/user-role', [], [], $this->getAuthHeaders());
+        } else {
+            $this->client->request('GET', '/authorization-tests/user-role');
+        }
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
@@ -43,7 +51,11 @@ class AuthorizationTestRoutesControllerTest extends AbstractSecurityTest
         $this->simulateLogin('ROLE_ADMIN');
 
         $this->output->writeln("<info>Valid request with ROLE_ADMIN ...</info>");
-        $this->client->request('GET', '/authorization-tests/admin-role');
+        if ($this->authorizationHeaderTypeTokenExtractorIsEnabled()) {
+            $this->client->request('GET', '/authorization-tests/admin-role', [], [], $this->getAuthHeaders());
+        } else {
+            $this->client->request('GET', '/authorization-tests/admin-role');
+        }
         $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 }
