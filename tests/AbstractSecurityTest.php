@@ -2,6 +2,9 @@
 
 namespace App\Tests;
 
+use App\Security\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\UserNotFoundException;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -14,6 +17,40 @@ use Symfony\Component\Yaml\Yaml;
  */
 abstract class AbstractSecurityTest extends AbstractFunctionalTest
 {
+    /**
+     * Get the logged in User from the JWTTokenAuthenticator.
+     * 
+     * @return UserInterface|null
+     * @throws \InvalidArgumentException If preAuthToken is not of the good type
+     * @throws InvalidPayloadException   If the user identity field is not a key of the payload
+     * @throws UserNotFoundException     If no user can be loaded from the given token
+     */
+    protected function getUser(): ?UserInterface
+    {
+        $rawToken = $this->getToken();
+        if (!$rawToken) {
+            return null;
+        }
+
+        $tokenDecoder = parent::$container->get('lexik_jwt_authentication.encoder.lcobucci');
+        $JWTTokenAuthenticator = parent::$container->get('lexik_jwt_authentication.jwt_token_authenticator');
+
+        $payload = $tokenDecoder->decode($rawToken);
+        $token = new PreAuthenticationJWTUserToken($rawToken);
+        $token->setPayload($payload);
+
+        $user = $JWTTokenAuthenticator->getUser(
+            $token,
+            parent::$container->get('security.user.provider.concrete.jwt')
+        );
+        
+        if (!$user instanceof UserInterface) {
+            return null;
+        }
+
+        return $user;
+    }
+    
     /**
      * @return boolean
      * @throws ParseException
