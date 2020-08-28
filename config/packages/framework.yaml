@@ -15,3 +15,6 @@ framework:
     #fragments: true
     php_errors:
         log: true
+
+    # https://symfony.com/doc/current/validation.html#configuration
+    validation: { enable_annotations: true }
