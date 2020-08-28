@@ -34,7 +34,7 @@ class AuthorizationTestRoutesControllerTest extends AbstractSecurityTest
         } else {
             $this->client->request('GET', '/authorization-tests/user-role');
         }
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -56,6 +56,6 @@ class AuthorizationTestRoutesControllerTest extends AbstractSecurityTest
         } else {
             $this->client->request('GET', '/authorization-tests/admin-role');
         }
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 }
