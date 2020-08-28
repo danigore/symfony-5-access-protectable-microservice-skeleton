@@ -47,6 +47,8 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
             }
         }
         $this->assertSame(true, $exceptionThrown);
+
+        $this->entityManager->clear();
     }
 
     /**
@@ -63,5 +65,7 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
             $exceptionThrown = true;
         }
         $this->assertSame(false, $exceptionThrown);
+
+        $this->entityManager->clear();
     }
 }
