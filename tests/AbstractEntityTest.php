@@ -41,7 +41,12 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
             $this->entityManager->flush();
         } catch (ConstraintViolationException $e) {
             $exceptionThrown = true;
+
+            if ($message) {
+                $this->output->writeln("<info>Exception message is: $message</info>");
+                $this->assertSame($message, $e->getMessage());
+            }
         }
-        $this->assertEquals(true, $exceptionThrown);
+        $this->assertSame(true, $exceptionThrown);
     }
 }
