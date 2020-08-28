@@ -34,7 +34,7 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
      */
     protected function expectedConstraintViolationExceptionOnPersist($entity, ?string $message = null): void
     {
-        $this->output->writeln("<info>Simulate an invalid DB flush: expected ConstraintViolationException ...</info>");
+        $this->output->writeln("<info>Simulate an invalid entity persist: expected ConstraintViolationException ...</info>");
         $exceptionThrown = false;
         try {
             $this->entityManager->persist($entity);
@@ -47,5 +47,21 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
             }
         }
         $this->assertSame(true, $exceptionThrown);
+    }
+
+    /**
+     * @param [type] $entity
+     * @return void
+     */
+    protected function entityIsValidSoPersistIsPossible($entity): void
+    {
+        $this->output->writeln("<info>Simulate a valid entity persist ...</info>");
+        $exceptionThrown = false;
+        try {
+            $this->entityManager->persist($entity);
+        } catch (ConstraintViolationException $e) {
+            $exceptionThrown = true;
+        }
+        $this->assertSame(false, $exceptionThrown);
     }
 }
