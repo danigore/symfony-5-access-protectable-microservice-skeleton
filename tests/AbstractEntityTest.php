@@ -26,19 +26,18 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
     }
 
     /**
-     * Simulate an invalid DB flush: expected ConstraintViolationException
+     * Simulate an invalid entity persist: expected ConstraintViolationException
      *
      * @param [type] $entity
      * @param string|null $message
      * @return void
      */
-    protected function expectedConstraintViolationException($entity, ?string $message = null): void
+    protected function expectedConstraintViolationExceptionOnPersist($entity, ?string $message = null): void
     {
         $this->output->writeln("<info>Simulate an invalid DB flush: expected ConstraintViolationException ...</info>");
         $exceptionThrown = false;
         try {
             $this->entityManager->persist($entity);
-            $this->entityManager->flush();
         } catch (ConstraintViolationException $e) {
             $exceptionThrown = true;
 
