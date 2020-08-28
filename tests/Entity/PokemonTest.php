@@ -24,7 +24,7 @@ class PokemonTest extends AbstractEntityTest
         $this->entityIsValidSoPersistIsPossible($pokemon);
 
         $pokemon->setType('whatever');
-        $this->expectedConstraintViolationExceptionOnPersist($pokemon, 'whatever is not a valid type of Pokemon!');
+        $this->expectedConstraintViolationExceptionOnPersist($pokemon, '"whatever" is not a valid type of Pokemon!');
 
         $pokemon->setType('electric');
         $this->entityIsValidSoPersistIsPossible($pokemon);
