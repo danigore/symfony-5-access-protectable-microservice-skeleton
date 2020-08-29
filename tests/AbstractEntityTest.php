@@ -43,8 +43,10 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
 
             if ($messages) {
                 $this->output->writeln("<info>Exception error messages: ".$e->getMessage()."</info>");
-                $exceptionMessages = array_values(json_decode($e->getMessage(), true)['messages']);
-                $this->assertSame(array_values($messages), $exceptionMessages);
+                $exceptionMessages = json_decode($e->getMessage(), true)['messages'];
+                sort($exceptionMessages);
+                sort($messages);
+                $this->assertSame($messages, $exceptionMessages);
             }
         }
         $this->assertSame(true, $exceptionThrown);
