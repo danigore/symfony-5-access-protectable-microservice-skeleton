@@ -38,8 +38,13 @@ class ConstraintValidatorSubscriber implements EventSubscriber
      */
     public function prePersist(LifecycleEventArgs $args): void
     {
-        if (0 < count($violations = $this->validator->validate($args->getObject()))) {
-            throw new ConstraintViolationException($violations->get(0)->getMessage());   
+        if (0 < count($constraintViolationInterfaces = $this->validator->validate($args->getObject()))) {
+            $violations = ['messages' =>[]];
+            foreach($constraintViolationInterfaces as $violation) {
+                $violations['messages'][] = (string)$violation->getMessage();
+            }
+
+            throw new ConstraintViolationException(\json_encode($violations));   
         }
     }
 
