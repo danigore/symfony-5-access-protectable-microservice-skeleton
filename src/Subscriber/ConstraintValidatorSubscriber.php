@@ -36,7 +36,7 @@ class ConstraintValidatorSubscriber implements EventSubscriber
      * @return void
      * @throws ConstraintViolationException
      */
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(LifecycleEventArgs $args): void
     {
         if (0 < count($violations = $this->validator->validate($args->getObject()))) {
             throw new ConstraintViolationException($violations->get(0)->getMessage());   
