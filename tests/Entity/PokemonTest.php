@@ -16,6 +16,8 @@ class PokemonTest extends AbstractEntityTest
      */
     public function testConstraintViolations(): void
     {
+        $this->output->writeln("\r\n<info>Test the entity constraint validator subscriber:</info>");
+
         $pokemon = new Pokemon();
         $this->assertSame('normal', $pokemon->getType());
         $this->expectedConstraintViolationExceptionOnPersist($pokemon, 'Every pokemon has a name!');
