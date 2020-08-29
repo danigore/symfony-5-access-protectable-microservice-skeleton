@@ -29,10 +29,10 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
      * Simulate an invalid entity persist: expected ConstraintViolationException
      *
      * @param [type] $entity
-     * @param string|null $message
+     * @param array|null $messages
      * @return void
      */
-    protected function expectedConstraintViolationExceptionOnPersist($entity, ?string $message = null): void
+    protected function expectedConstraintViolationExceptionOnPersist($entity, ?array $messages = null): void
     {
         $this->output->writeln("<info>Simulate an invalid entity persist: expected ConstraintViolationException ...</info>");
         $exceptionThrown = false;
@@ -41,9 +41,10 @@ abstract class AbstractEntityTest extends AbstractFunctionalTest
         } catch (ConstraintViolationException $e) {
             $exceptionThrown = true;
 
-            if ($message) {
-                $this->output->writeln("<info>Exception message is: $message</info>");
-                $this->assertSame($message, $e->getMessage());
+            if ($messages) {
+                $this->output->writeln("<info>Exception error messages: ".$e->getMessage()."</info>");
+                $exceptionMessages = array_values(json_decode($e->getMessage())['messages']);
+                $this->assertSame(array_values($messages), $exceptionMessages);
             }
         }
         $this->assertSame(true, $exceptionThrown);
