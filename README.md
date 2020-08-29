@@ -29,3 +29,5 @@ Stateless and database-less JWT authorization ready Symfony 5 microservice skele
 >
 > ***More info about why is the combination of JWT and XSS so relevant***:
 > [Christian Kolb:Improve security when working with JWT and Symfony](https://blog.liplex.de/improve-security-when-working-with-jwt-and-symfony/)
+
+*Offtopic: I implemented an entity constraint validator subscriber to this skeleton, what subscribed to the prePersist ORM lifecycle event (more info:[doctrine-orm/lifecycle-events](https://www.doctrine-project.org/projects/doctrine-orm/en/current/reference/events.html#lifecycle-events), primarily because I create this service for myself, but anyway in my opinion **the entity validation should be automated** in a REST api **and the application layer should be throws an exception, if that entity is invalid**. So, the Pokemon entity is just because for the tests, so, you know, just delete the unnecessary files (App\Entity\Pokemon, App\Repository\PokemonRepository, App\Tests\Entity\PokemonTest).*
