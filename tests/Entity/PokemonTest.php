@@ -20,13 +20,13 @@ class PokemonTest extends AbstractEntityTest
 
         $pokemon = new Pokemon();
         $this->assertSame('normal', $pokemon->getType());
-        $this->expectedConstraintViolationExceptionOnPersist($pokemon, 'Every pokemon has a name!');
-
-        $pokemon->setName('Pikachu');
-        $this->entityIsValidSoPersistIsPossible($pokemon);
+        $this->expectedConstraintViolationExceptionOnPersist($pokemon, ['Every pokemon has a name!']);
 
         $pokemon->setType('whatever');
-        $this->expectedConstraintViolationExceptionOnPersist($pokemon, '"whatever" is not a valid type of Pokemon!');
+        $this->expectedConstraintViolationExceptionOnPersist($pokemon, ['Every pokemon has a name!', '"whatever" is not a valid type of Pokemon!']);
+
+        $pokemon->setName('Pikachu');
+        $this->expectedConstraintViolationExceptionOnPersist($pokemon, ['"whatever" is not a valid type of Pokemon!']);
 
         $pokemon->setType('electric');
         $this->entityIsValidSoPersistIsPossible($pokemon);

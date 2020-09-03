@@ -138,6 +138,20 @@ abstract class AbstractFunctionalTest extends WebTestCase
     }
 
     /**
+     * Assert the values of two arrays, so the order of elements not important
+     * 
+     * @param [type] $array1
+     * @param [type] $array2
+     * @return void
+     */
+    protected function arrayValuesAsSame($array1, $array2): void
+    {
+        sort($array1);
+        sort($array2);
+        $this->assertSame($array1, $array2);
+    }
+
+    /**
      * @return void
      */
     public function tearDown(): void
